@@ -54,6 +54,7 @@ namespace Neurallingua
                     answerTextBlock.Background = new SolidColorBrush(Colors.LightGreen);
                     testingEngine.AddPhrasePairToRepeat(phrasePair);
                 }
+                listenButtonTextBlock.Text = phrasePair.ForeignPhrase;
                 testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
             }
             else if (answerChecked == true)

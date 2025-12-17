@@ -85,6 +85,7 @@ namespace Neurallingua
                     correctButton.Background = new SolidColorBrush(Colors.LightGreen);
                     testingEngine.AddPhrasePairToRepeat(phrasePair);
                 }
+                phraseTextBlock.Text += "\n\n" + phrasePair.ForeignPhrase;
                 testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
             }
             else if (answerChecked == true)

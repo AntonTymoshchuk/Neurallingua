@@ -67,11 +67,13 @@ namespace Neurallingua
         {
             recognitionFinished = true;
             speakButton.Background = new SolidColorBrush(Colors.LightGreen);
+            phraseTextBlock.Text += "\n\n" + phrasePair.ForeignPhrase;
         }
 
         private void engine_SpeechRecognitionRejected(object? sender, SpeechRecognitionRejectedEventArgs e)
         {
             speakButton.Background = new SolidColorBrush(Colors.Pink);
+            phraseTextBlock.Text += "\n\n" + phrasePair.ForeignPhrase;
         }
 
         private string GetRecognizablePhrase()

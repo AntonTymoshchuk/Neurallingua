@@ -94,6 +94,7 @@ namespace Neurallingua
                 correctButton.Background = new SolidColorBrush(Colors.LightGreen);
                 testingEngine.AddPhrasePairToRepeat(phrasePair);
             }
+            listenButtonTextBlock.Text = phrasePair.ForeignPhrase;
             testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
         }
 
