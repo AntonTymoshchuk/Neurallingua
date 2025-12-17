@@ -86,7 +86,7 @@ namespace Neurallingua
             if (variantButton == correctButton)
             {
                 variantButton.Background = new SolidColorBrush(Colors.LightGreen);
-                phrasePair.TimesTested++;
+                phrasePair.IncreaseTimesTested();
             }
             else if (variantButton != correctButton)
             {

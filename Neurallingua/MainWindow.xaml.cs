@@ -37,6 +37,7 @@ namespace Neurallingua
         private string foreignPhrase;
         private string originPhrase;
         private int timesTested;
+        private DateTime testedDate;
 
         public string ForeignPhrase
         {
@@ -54,6 +55,12 @@ namespace Neurallingua
             set { timesTested = value; }
         }
 
+        public DateTime TestedDate
+        {
+            get { return testedDate; }
+            set { testedDate = value; }
+        }
+
         public PhrasePair(string foreignPhrase, string originPhrase, int timesTested)
         {
             this.foreignPhrase = foreignPhrase;
@@ -61,15 +68,25 @@ namespace Neurallingua
             this.timesTested = timesTested;
         }
 
+        public void IncreaseTimesTested()
+        {
+            timesTested++;
+            testedDate = DateTime.Now;
+        }
+
         public override string ToString()
         {
-            return string.Format("{0}|{1}|{2}", foreignPhrase, originPhrase, timesTested);
+            string s = string.Format("{0}|{1}|{2}",
+                foreignPhrase, originPhrase, timesTested);
+            if (timesTested > 0)
+                s = string.Format("{0}|{1}", s, testedDate.ToString());
+            return s;
         }
     }
 
     public class TestingEngine
     {
-        private string filePath;
+        private const string phrasesPath = "phrases.csv";
         private int testsCount;
         private int lessTestedValue;
         private List<PhrasePair> allPhrasePairs;
@@ -77,39 +94,53 @@ namespace Neurallingua
         private List<PhrasePair> testedPhrasePairs;
         private List<PhrasePair> randPhrasePairs;
 
+        private const string settingsPath = "settings.csv";
+        private bool applyForgetting = true;
+        private bool forgettingByTest = true;
+        private bool forgettingByDay = false;
+
         public TestingEngine()
         {
             allPhrasePairs = new List<PhrasePair>();
             testingPhrasePairs = new List<PhrasePair>();
             testedPhrasePairs = new List<PhrasePair>();
             randPhrasePairs = new List<PhrasePair>();
+            ReadAndApplySettings();
         }
 
-        public bool DeterminePhrasePairs(string filePath, int testsCount)
+        public bool DeterminePhrasePairs(int testsCount)
         {
             ClearPhrasePairsLists();
-            this.filePath = filePath;
             this.testsCount = testsCount;
 
-            if (File.Exists(filePath) == false)
+            if (File.Exists(phrasesPath) == false)
             {
-                MessageBox.Show("Файл не существует!");
+                MessageBox.Show("Файл phrases.csv не существует");
                 return false;
             }
 
-            string[] strings = File.ReadAllLines(filePath);
+            string[] strings = File.ReadAllLines(phrasesPath);
             string[] items;
+            string foreignPhrase, originPhrase;
+            int timesTested;
             foreach (string s in strings)
             {
                 items = s.Split('|');
                 try
                 {
-                    allPhrasePairs.Add(new PhrasePair(items[0], items[1], Convert.ToInt32(items[2])));
-                    randPhrasePairs.Add(new PhrasePair(items[0], items[1], Convert.ToInt32(items[2])));
+                    foreignPhrase = items[0];
+                    originPhrase = items[1];
+                    timesTested = Convert.ToInt32(items[2]);
+                    PhrasePair phrasePair = new PhrasePair(
+                        foreignPhrase, originPhrase, timesTested);
+                    if (items.Length == 4)
+                        phrasePair.TestedDate = DateTime.Parse(items[3]);
+                    allPhrasePairs.Add(phrasePair);
+                    randPhrasePairs.Add(phrasePair);
                 }
                 catch
                 {
-                    MessageBox.Show("Ошибка!");
+                    MessageBox.Show("Ошибка в DeterminePhrasePairs");
                     return false;
                 }
             }
@@ -136,13 +167,39 @@ namespace Neurallingua
                 allPhrasePairs.Remove(lessTestedPair);
                 iteration++;
             }
-            foreach (PhrasePair phrasePair in allPhrasePairs)
+            if (applyForgetting == true)
             {
-                if (phrasePair.TimesTested > 0)
-                    phrasePair.TimesTested--;
+                foreach (PhrasePair phrasePair in allPhrasePairs)
+                {
+                    if (forgettingByTest == true && phrasePair.TimesTested > 0)
+                        phrasePair.TimesTested--;
+                    if (forgettingByDay == true && phrasePair.TimesTested > 0)
+                        phrasePair.TimesTested -= (DateTime.Now - phrasePair.TestedDate).Days;
+                }
             }
 
             return true;
+        }
+
+        public void ReadAndApplySettings()
+        {
+            if (File.Exists(settingsPath) == false)
+            {
+                MessageBox.Show("Файл settings.csv не существует");
+                return;
+            }
+
+            string[] settings = File.ReadAllLines(settingsPath);
+            try
+            {
+                applyForgetting = Convert.ToBoolean(settings[0].Split(' ')[1]);
+                forgettingByTest = Convert.ToBoolean(settings[1].Split(' ')[1]);
+                forgettingByDay = Convert.ToBoolean(settings[2].Split(' ')[1]);
+            }
+            catch
+            {
+                MessageBox.Show("Ошибка в ReadAndApplySettings");
+            }
         }
 
         public PhrasePair GetNextTestingPair()
@@ -171,7 +228,7 @@ namespace Neurallingua
             List<string> strings = new List<string>();
             foreach (PhrasePair pair in allPhrasePairs)
                 strings.Add(pair.ToString());
-            File.WriteAllLines(filePath, strings.ToArray());
+            File.WriteAllLines(phrasesPath, strings.ToArray());
         }
 
         private void ClearPhrasePairsLists()

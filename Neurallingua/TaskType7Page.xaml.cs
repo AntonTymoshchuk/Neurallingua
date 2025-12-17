@@ -40,7 +40,7 @@ namespace Neurallingua
                 if (text == phrasePair.OriginPhrase)
                 {
                     translationTextBox.Background = new SolidColorBrush(Colors.LightGreen);
-                    phrasePair.TimesTested++;
+                    phrasePair.IncreaseTimesTested();
                 }
                 else if (text != phrasePair.OriginPhrase)
                 {

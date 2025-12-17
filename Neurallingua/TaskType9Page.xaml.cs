@@ -56,7 +56,7 @@ namespace Neurallingua
         private void continueButton_Click(object sender, RoutedEventArgs e)
         {
             if (recognitionFinished == true)
-                phrasePair.TimesTested++;
+                phrasePair.IncreaseTimesTested();
             else if (recognitionFinished == false)
                 testingEngine.AddPhrasePairToRepeat(phrasePair);
             testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);

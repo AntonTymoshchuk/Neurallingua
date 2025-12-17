@@ -77,7 +77,7 @@ namespace Neurallingua
                 if (answerButton == correctButton)
                 {
                     answerButton.Background = new SolidColorBrush(Colors.LightGreen);
-                    phrasePair.TimesTested++;
+                    phrasePair.IncreaseTimesTested();
                 }
                 else if (answerButton != correctButton)
                 {

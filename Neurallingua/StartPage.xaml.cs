@@ -29,10 +29,9 @@ namespace Neurallingua
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            string filePath = "Neurallingua phrases.csv";
             string text = (sender as Button).Content.ToString();
             int testsCount = Convert.ToInt32(text.Split([' '])[1]);
-            if (testingEngine.DeterminePhrasePairs(filePath, testsCount) == false)
+            if (testingEngine.DeterminePhrasePairs(testsCount) == false)
                 return;
             testingEngine.GoToNextTaskPage(NavigationService);
         }

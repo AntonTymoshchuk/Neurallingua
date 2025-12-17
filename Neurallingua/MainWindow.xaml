@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Neurallingua"
         mc:Ignorable="d"
-        Title="Neurallingua" Height="530" Width="425" ResizeMode="CanMinimize">
+        Title="Neurallingua" Height="750" Width="550" ResizeMode="CanMinimize">
     <Grid>
         <Frame Content="" NavigationUIVisibility="Hidden" x:Name="mainFrame"/>
     </Grid>
