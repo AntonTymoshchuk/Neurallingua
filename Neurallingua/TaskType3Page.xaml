@@ -24,6 +24,7 @@
         <Button x:Name="listenButton" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="150" Width="505" FontSize="20" Click="listenButton_Click">
             <TextBlock x:Name="listenButtonTextBlock" TextWrapping="Wrap" Text="🔊" FontSize="20"/>
         </Button>
+        <ProgressBar x:Name="sessionProgressBar" HorizontalAlignment="Center" Height="10" Margin="0,575,0,0" VerticalAlignment="Top" Width="505"/>
 
     </Grid>
 </Page>

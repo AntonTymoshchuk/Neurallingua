@@ -14,6 +14,7 @@
         <Button x:Name="variant3Button" HorizontalAlignment="Left" Margin="10,370,0,0" VerticalAlignment="Top" Height="200" Width="250" Content="🔊 3" FontSize="20" Click="variantButton_Click"/>
         <Button x:Name="variant4Button" HorizontalAlignment="Left" Margin="265,370,0,0" VerticalAlignment="Top" Height="200" Width="250" Content="🔊 4" FontSize="20" Click="variantButton_Click"/>
         <Button x:Name="continueButton" Content="Проверить" HorizontalAlignment="Center" Margin="0,590,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="continueButton_Click"/>
+        <ProgressBar x:Name="sessionProgressBar" HorizontalAlignment="Center" Height="10" Margin="0,575,0,0" VerticalAlignment="Top" Width="505"/>
 
     </Grid>
 </Page>

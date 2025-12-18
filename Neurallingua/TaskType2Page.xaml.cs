@@ -28,6 +28,8 @@ namespace Neurallingua
             this.testingEngine = testingEngine;
             phrasePair = testingEngine.GetNextTestingPair();
             phraseTextBlock.Text = phrasePair.OriginPhrase;
+            sessionProgressBar.Maximum = testingEngine.Total;
+            sessionProgressBar.Value = testingEngine.Progress;
         }
 
         private void continueButton_Click(object sender, RoutedEventArgs e)

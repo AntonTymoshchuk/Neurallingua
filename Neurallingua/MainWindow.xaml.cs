@@ -88,16 +88,24 @@ namespace Neurallingua
     {
         private const string phrasesPath = "phrases.csv";
         private int testsCount;
+        private int totalTestsCount;
         private int lessTestedValue;
         private List<PhrasePair> allPhrasePairs;
         private List<PhrasePair> testingPhrasePairs;
         private List<PhrasePair> testedPhrasePairs;
         private List<PhrasePair> randPhrasePairs;
+        SpeechSynthesizer synthesizer;
 
         private const string settingsPath = "settings.csv";
         private bool applyForgetting = true;
         private bool forgettingByTest = true;
         private bool forgettingByDay = false;
+
+        public int Total
+        { get { return totalTestsCount; } }
+
+        public int Progress
+        { get { return totalTestsCount - testsCount; } }
 
         public TestingEngine()
         {
@@ -105,6 +113,7 @@ namespace Neurallingua
             testingPhrasePairs = new List<PhrasePair>();
             testedPhrasePairs = new List<PhrasePair>();
             randPhrasePairs = new List<PhrasePair>();
+            synthesizer = new SpeechSynthesizer();
             ReadAndApplySettings();
         }
 
@@ -146,6 +155,7 @@ namespace Neurallingua
             }
             if (this.testsCount > allPhrasePairs.Count)
                 this.testsCount = allPhrasePairs.Count;
+            totalTestsCount = this.testsCount;
 
             lessTestedValue = allPhrasePairs[0].TimesTested;
             PhrasePair lessTestedPair;
@@ -307,7 +317,8 @@ namespace Neurallingua
 
         public void ReadPhrase(string phrase, bool speakAsync = true)
         {
-            SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+            synthesizer.Pause();
+            synthesizer = new SpeechSynthesizer();
             synthesizer.SetOutputToDefaultAudioDevice();
 
             List<VoiceInfo> voiceInfos = new List<VoiceInfo>();

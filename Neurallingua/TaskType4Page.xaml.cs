@@ -32,6 +32,8 @@ namespace Neurallingua
             this.testingEngine = testingEngine;
             phrasePair = testingEngine.GetNextTestingPair();
             phraseTextBlock.Text = phrasePair.OriginPhrase;
+            sessionProgressBar.Maximum = testingEngine.Total;
+            sessionProgressBar.Value = testingEngine.Progress;
             Random random = new Random();
             int correctButtonId = random.Next(0, 4);
             foreignPhrases[correctButtonId] = phrasePair.ForeignPhrase;
