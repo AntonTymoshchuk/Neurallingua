@@ -184,7 +184,11 @@ namespace Neurallingua
                     if (forgettingByTest == true && phrasePair.TimesTested > 0)
                         phrasePair.TimesTested--;
                     if (forgettingByDay == true && phrasePair.TimesTested > 0)
+                    {
                         phrasePair.TimesTested -= (DateTime.Now - phrasePair.TestedDate).Days;
+                        if (phrasePair.TimesTested < 0)
+                            phrasePair.TimesTested = 0;
+                    }
                 }
             }
 
@@ -225,7 +229,7 @@ namespace Neurallingua
 
         public void AddPhrasePairToRepeat(PhrasePair phrasePair)
         {
-            phrasePair.TimesTested = lessTestedValue;
+            phrasePair.TimesTested = lessTestedValue - 1;
             testingPhrasePairs.Add(phrasePair);
             testedPhrasePairs.Remove(phrasePair);
             testsCount++;
