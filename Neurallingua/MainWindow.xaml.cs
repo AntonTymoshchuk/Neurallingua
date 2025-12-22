@@ -94,6 +94,8 @@ namespace Neurallingua
         private List<PhrasePair> testingPhrasePairs;
         private List<PhrasePair> testedPhrasePairs;
         private List<PhrasePair> randPhrasePairs;
+        private PhrasePair lastPhrasePair;
+        private bool goToStudyingPage = false;
         SpeechSynthesizer synthesizer;
 
         private const string settingsPath = "settings.csv";
@@ -106,6 +108,9 @@ namespace Neurallingua
 
         public int Progress
         { get { return totalTestsCount - testsCount; } }
+
+        public PhrasePair LastPhrasePair
+        { get { return lastPhrasePair; } }
 
         public TestingEngine()
         {
@@ -223,6 +228,7 @@ namespace Neurallingua
             PhrasePair testingPair = testingPhrasePairs[index];
             testingPhrasePairs.Remove(testingPair);
             testedPhrasePairs.Add(testingPair);
+            lastPhrasePair = testingPair;
             testsCount--;
             return testingPair;
         }
@@ -232,6 +238,7 @@ namespace Neurallingua
             phrasePair.TimesTested = lessTestedValue - 1;
             testingPhrasePairs.Add(phrasePair);
             testedPhrasePairs.Remove(phrasePair);
+            goToStudyingPage = true;
             testsCount++;
         }
 
@@ -259,6 +266,12 @@ namespace Neurallingua
             {
                 SaveTestedPhrases();
                 navigationService.Navigate(new StartPage(this));
+                return;
+            }
+            if (goToStudyingPage == true)
+            {
+                navigationService.Navigate(new StudyingPage(this));
+                goToStudyingPage = false;
                 return;
             }
             Random random = new Random();
@@ -325,17 +338,35 @@ namespace Neurallingua
             synthesizer = new SpeechSynthesizer();
             synthesizer.SetOutputToDefaultAudioDevice();
 
-            List<VoiceInfo> voiceInfos = new List<VoiceInfo>();
-            foreach (InstalledVoice installed in synthesizer.GetInstalledVoices())
-            {
-                if (installed.VoiceInfo.Culture.Name == "fr-FR")
-                    voiceInfos.Add(installed.VoiceInfo);
-            }
+            List<VoiceInfo> voiceInfos = GetAvailableVoices("fr-FR");
             Random random = new Random();
             synthesizer.SelectVoice(voiceInfos[random.Next(0, voiceInfos.Count)].Name);
             if (speakAsync == true)
                 synthesizer.SpeakAsync(phrase);
             else synthesizer.Speak(phrase);
+        }
+
+        public void ReadPhraseByCertainVoice(string phrase, int voiceIndex)
+        {
+            synthesizer.Pause();
+            synthesizer = new SpeechSynthesizer();
+            synthesizer.SetOutputToDefaultAudioDevice();
+
+            List<VoiceInfo> voiceInfos = GetAvailableVoices("fr-FR");
+            synthesizer.SelectVoice(voiceInfos[voiceIndex].Name);
+            synthesizer.SpeakAsync(phrase);
+        }
+
+        private List<VoiceInfo> GetAvailableVoices(string cultureCode)
+        {
+            List<VoiceInfo> voiceInfos = new List<VoiceInfo>();
+            foreach (InstalledVoice installed in synthesizer.GetInstalledVoices())
+            {
+                if (installed.VoiceInfo.Culture.Name == cultureCode &&
+                    installed.VoiceInfo.Id.StartsWith("MSTTS") == true)
+                    voiceInfos.Add(installed.VoiceInfo);
+            }
+            return voiceInfos;
         }
     }
 }
