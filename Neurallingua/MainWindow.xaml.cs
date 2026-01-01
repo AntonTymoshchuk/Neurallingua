@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Neurallingua
 {
@@ -38,6 +39,7 @@ namespace Neurallingua
         private string originPhrase;
         private int timesTested;
         private DateTime testedDate;
+        private bool tested = false;
 
         public string ForeignPhrase
         {
@@ -71,6 +73,7 @@ namespace Neurallingua
         public void IncreaseTimesTested()
         {
             timesTested++;
+            tested = true;
             testedDate = DateTime.Now;
         }
 
@@ -78,7 +81,7 @@ namespace Neurallingua
         {
             string s = string.Format("{0}|{1}|{2}",
                 foreignPhrase, originPhrase, timesTested);
-            if (timesTested > 0)
+            if (timesTested > 0 || tested == true)
                 s = string.Format("{0}|{1}", s, testedDate.ToString());
             return s;
         }
@@ -111,6 +114,9 @@ namespace Neurallingua
 
         public PhrasePair LastPhrasePair
         { get { return lastPhrasePair; } }
+
+        public bool GoToStudyingPage
+        { get { return goToStudyingPage; } }
 
         public TestingEngine()
         {
@@ -147,7 +153,7 @@ namespace Neurallingua
                     timesTested = Convert.ToInt32(items[2]);
                     PhrasePair phrasePair = new PhrasePair(
                         foreignPhrase, originPhrase, timesTested);
-                    if (items.Length == 4)
+                    if (items.Length == 4 && items[3] != string.Empty)
                         phrasePair.TestedDate = DateTime.Parse(items[3]);
                     allPhrasePairs.Add(phrasePair);
                     randPhrasePairs.Add(phrasePair);
@@ -306,6 +312,20 @@ namespace Neurallingua
                     navigationService.Navigate(new TaskType9Page(this));
                     break;
             }
+        }
+
+        public void EndUpWithTaskPage(Dispatcher dispatcher, NavigationService navigationService)
+        {
+            Thread thread = new(() =>
+            {
+                ReadPhrase(lastPhrasePair.ForeignPhrase, false);
+                dispatcher.Invoke(() =>
+                {
+                    GoToNextTaskPage(navigationService);
+                });
+            });
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         public string RandomForeignPhrase(string exceptOf)

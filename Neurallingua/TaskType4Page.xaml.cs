@@ -91,10 +91,7 @@ namespace Neurallingua
                 testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
             }
             else if (answerChecked == true)
-            {
-                testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);
-                testingEngine.GoToNextTaskPage(NavigationService);
-            }
+                testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
     }
 }

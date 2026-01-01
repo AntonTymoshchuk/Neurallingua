@@ -77,10 +77,15 @@ namespace Neurallingua
 
         private void variantButton_Click(object sender, RoutedEventArgs e)
         {
-            if (gotVariant == true)
-                return;
-            gotVariant = true;
             Button variantButton = sender as Button;
+            if (gotVariant == true)
+            {
+                if (variantButton == correctButton &&
+                    testingEngine.GoToStudyingPage == false)
+                    testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
+                return;
+            }
+            gotVariant = true;
             if (variantButton == correctButton)
             {
                 variantButton.Background = new SolidColorBrush(Colors.LightGreen);
@@ -99,8 +104,7 @@ namespace Neurallingua
         {
             if (gotVariant == false)
                 return;
-            testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);
-            testingEngine.GoToNextTaskPage(NavigationService);
+            testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
     }
 }

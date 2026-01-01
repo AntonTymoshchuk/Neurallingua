@@ -30,6 +30,7 @@ namespace Neurallingua
             phraseTextBlock.Text = phrasePair.OriginPhrase;
             sessionProgressBar.Maximum = testingEngine.Total;
             sessionProgressBar.Value = testingEngine.Progress;
+            translationTextBox.Focus();
         }
 
         private void continueButton_Click(object sender, RoutedEventArgs e)
@@ -54,9 +55,17 @@ namespace Neurallingua
                 testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
             }
             else if (answerChecked == true)
+                testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
+        }
+
+        private void translationTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (translationTextBox.Text == phrasePair.ForeignPhrase)
             {
-                testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);
-                testingEngine.GoToNextTaskPage(NavigationService);
+                continueButton.Content = "Продолжить";
+                translationTextBox.Background = new SolidColorBrush(Colors.LightGreen);
+                phrasePair.IncreaseTimesTested();
+                testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
             }
         }
     }

@@ -61,15 +61,16 @@ namespace Neurallingua
                 phrasePair.IncreaseTimesTested();
             else if (recognitionFinished == false)
                 testingEngine.AddPhrasePairToRepeat(phrasePair);
-            testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);
-            testingEngine.GoToNextTaskPage(NavigationService);
+            testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
 
         private void engine_SpeechRecognized(object? sender, SpeechRecognizedEventArgs e)
         {
             recognitionFinished = true;
+            phrasePair.IncreaseTimesTested();
             speakButton.Background = new SolidColorBrush(Colors.LightGreen);
             phraseTextBlock.Text += "\n\n" + phrasePair.ForeignPhrase;
+            testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
 
         private void engine_SpeechRecognitionRejected(object? sender, SpeechRecognitionRejectedEventArgs e)
@@ -85,7 +86,6 @@ namespace Neurallingua
             string recognizablePhrase = string.Empty;
             foreach (string item in items)
                 recognizablePhrase += item;
-            System.Diagnostics.Debug.Print(recognizablePhrase);
             return recognizablePhrase;
         }
     }

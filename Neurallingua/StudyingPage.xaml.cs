@@ -21,6 +21,7 @@ namespace Neurallingua
     {
         private TestingEngine testingEngine;
         private PhrasePair phrasePair;
+        private Thread thread;
 
         public StudyingPage(TestingEngine testingEngine)
         {
@@ -44,8 +45,7 @@ namespace Neurallingua
 
         private void continueButton_Click(object sender, RoutedEventArgs e)
         {
-            testingEngine.ReadPhrase(phrasePair.ForeignPhrase, false);
-            testingEngine.GoToNextTaskPage(NavigationService);
+            testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
     }
 }
