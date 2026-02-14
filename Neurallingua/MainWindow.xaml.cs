@@ -38,8 +38,6 @@ namespace Neurallingua
         private string foreignPhrase;
         private string originPhrase;
         private int timesTested;
-        private DateTime testedDate;
-        private bool tested = false;
 
         public string ForeignPhrase
         {
@@ -57,12 +55,6 @@ namespace Neurallingua
             set { timesTested = value; }
         }
 
-        public DateTime TestedDate
-        {
-            get { return testedDate; }
-            set { testedDate = value; }
-        }
-
         public PhrasePair(string foreignPhrase, string originPhrase, int timesTested)
         {
             this.foreignPhrase = foreignPhrase;
@@ -73,16 +65,12 @@ namespace Neurallingua
         public void IncreaseTimesTested()
         {
             timesTested++;
-            tested = true;
-            testedDate = DateTime.Now;
         }
 
         public override string ToString()
         {
             string s = string.Format("{0}|{1}|{2}",
                 foreignPhrase, originPhrase, timesTested);
-            if (timesTested > 0 || tested == true)
-                s = string.Format("{0}|{1}", s, testedDate.ToString());
             return s;
         }
     }
@@ -100,11 +88,6 @@ namespace Neurallingua
         private PhrasePair lastPhrasePair;
         private bool goToStudyingPage = false;
         SpeechSynthesizer synthesizer;
-
-        private const string settingsPath = "settings.csv";
-        private bool applyForgetting = true;
-        private bool forgettingByTest = true;
-        private bool forgettingByDay = false;
 
         public int Total
         { get { return totalTestsCount; } }
@@ -125,7 +108,6 @@ namespace Neurallingua
             testedPhrasePairs = new List<PhrasePair>();
             randPhrasePairs = new List<PhrasePair>();
             synthesizer = new SpeechSynthesizer();
-            ReadAndApplySettings();
         }
 
         public bool DeterminePhrasePairs(int testsCount)
@@ -153,8 +135,6 @@ namespace Neurallingua
                     timesTested = Convert.ToInt32(items[2]);
                     PhrasePair phrasePair = new PhrasePair(
                         foreignPhrase, originPhrase, timesTested);
-                    if (items.Length == 4 && items[3] != string.Empty)
-                        phrasePair.TestedDate = DateTime.Parse(items[3]);
                     allPhrasePairs.Add(phrasePair);
                     randPhrasePairs.Add(phrasePair);
                 }
@@ -188,43 +168,8 @@ namespace Neurallingua
                 allPhrasePairs.Remove(lessTestedPair);
                 iteration++;
             }
-            if (applyForgetting == true)
-            {
-                foreach (PhrasePair phrasePair in allPhrasePairs)
-                {
-                    if (forgettingByTest == true && phrasePair.TimesTested > 0)
-                        phrasePair.TimesTested--;
-                    if (forgettingByDay == true && phrasePair.TimesTested > 0)
-                    {
-                        phrasePair.TimesTested -= (DateTime.Now - phrasePair.TestedDate).Days;
-                        if (phrasePair.TimesTested < 0)
-                            phrasePair.TimesTested = 0;
-                    }
-                }
-            }
 
             return true;
-        }
-
-        public void ReadAndApplySettings()
-        {
-            if (File.Exists(settingsPath) == false)
-            {
-                MessageBox.Show("Файл settings.csv не существует");
-                return;
-            }
-
-            string[] settings = File.ReadAllLines(settingsPath);
-            try
-            {
-                applyForgetting = Convert.ToBoolean(settings[0].Split(' ')[1]);
-                forgettingByTest = Convert.ToBoolean(settings[1].Split(' ')[1]);
-                forgettingByDay = Convert.ToBoolean(settings[2].Split(' ')[1]);
-            }
-            catch
-            {
-                MessageBox.Show("Ошибка в ReadAndApplySettings");
-            }
         }
 
         public PhrasePair GetNextTestingPair()
@@ -281,7 +226,7 @@ namespace Neurallingua
                 return;
             }
             Random random = new Random();
-            int taskType = random.Next(0, 9);
+            int taskType = random.Next(0, 7);
             switch (taskType)
             {
                 case 0:
@@ -303,13 +248,13 @@ namespace Neurallingua
                     navigationService.Navigate(new TaskType6Page(this));
                     break;
                 case 6:
-                    navigationService.Navigate(new TaskType7Page(this));
+                    navigationService.Navigate(new TaskType9Page(this));
                     break;
                 case 7:
-                    navigationService.Navigate(new TaskType8Page(this));
+                    navigationService.Navigate(new TaskType7Page(this));
                     break;
                 case 8:
-                    navigationService.Navigate(new TaskType9Page(this));
+                    navigationService.Navigate(new TaskType8Page(this));
                     break;
             }
         }
