@@ -60,7 +60,11 @@ namespace Neurallingua
             if (recognitionFinished == true)
                 phrasePair.IncreaseTimesTested();
             else if (recognitionFinished == false)
+            {
+                phraseTextBlock.Text = string.Format("{0}\n\n{1}",
+                    phrasePair.OriginPhrase, phrasePair.ForeignPhrase);
                 testingEngine.AddPhrasePairToRepeat(phrasePair);
+            }
             testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
         }
 
