@@ -35,5 +35,10 @@ namespace Neurallingua
                 return;
             testingEngine.GoToNextTaskPage(NavigationService);
         }
+
+        private void listeningButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ListeningPage(testingEngine));
+        }
     }
 }

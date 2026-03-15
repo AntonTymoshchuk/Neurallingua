@@ -186,11 +186,14 @@ namespace Neurallingua
 
         public void AddPhrasePairToRepeat(PhrasePair phrasePair)
         {
-            phrasePair.TimesTested = lessTestedValue - 1;
-            testingPhrasePairs.Add(phrasePair);
-            testedPhrasePairs.Remove(phrasePair);
-            goToStudyingPage = true;
-            testsCount++;
+            if (testedPhrasePairs.Contains(phrasePair))
+            {
+                phrasePair.TimesTested = lessTestedValue - 1;
+                testingPhrasePairs.Add(phrasePair);
+                testedPhrasePairs.Remove(phrasePair);
+                goToStudyingPage = true;
+                testsCount++;
+            }
         }
 
         private void SaveTestedPhrases()

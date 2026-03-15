@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,35 +14,31 @@ using System.Windows.Shapes;
 namespace Neurallingua
 {
     /// <summary>
-    /// Interaction logic for StudyingPage.xaml
+    /// Interaction logic for ListeningPage.xaml
     /// </summary>
-    public partial class StudyingPage : Page
+    public partial class ListeningPage : Page
     {
         private TestingEngine testingEngine;
-        private PhrasePair phrasePair;
 
-        public StudyingPage(TestingEngine testingEngine)
+        public ListeningPage(TestingEngine testingEngine)
         {
             InitializeComponent();
+            foreignPhraseTextBox.Focus();
             this.testingEngine = testingEngine;
-            phrasePair = testingEngine.LastPhrasePair;
-            foreignPhraseTextBlock.Text = phrasePair.ForeignPhrase;
-            originPhraseTextBlock.Text = phrasePair.OriginPhrase;
-            testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
         }
 
         private void listenButton_Click(object sender, RoutedEventArgs e)
         {
             Button listenButton = sender as Button;
-            string phrase = phrasePair.ForeignPhrase;
+            string phrase = foreignPhraseTextBox.Text;
             string text = listenButton.Content.ToString();
             int index = Convert.ToInt32(text.Split(' ')[1]) - 1;
             testingEngine.ReadPhraseByCertainVoice(phrase, index);
         }
 
-        private void continueButton_Click(object sender, RoutedEventArgs e)
+        private void escapeButton_Click(object sender, RoutedEventArgs e)
         {
-            testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
+            NavigationService.Navigate(new StartPage(testingEngine));
         }
     }
 }

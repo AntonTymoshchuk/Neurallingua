@@ -1,16 +1,15 @@
-﻿<Page x:Class="Neurallingua.StudyingPage"
+﻿<Page x:Class="Neurallingua.ListeningPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Neurallingua"
       mc:Ignorable="d"
-      Title="StudyingPage" Width="525" Height="700">
+      Title="ListeningPage" Width="525" Height="700">
 
     <Grid>
-        <TextBlock x:Name="foreignPhraseTextBlock" HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="505" FontSize="20" TextAlignment="Center" FontWeight="Bold"/>
-        <TextBlock x:Name="originPhraseTextBlock" HorizontalAlignment="Center" Margin="0,165,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="150" Width="505" FontSize="20" TextAlignment="Center"/>
-        <Button x:Name="continueButton" Content="Продолжить" HorizontalAlignment="Center" Margin="0,590,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="continueButton_Click"/>
+        <TextBox x:Name="foreignPhraseTextBox" HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="505" Height="150" FontSize="20" TextAlignment="Center"/>
+        <Button x:Name="escapeButton" Content="Вернуться" HorizontalAlignment="Center" Margin="0,590,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="escapeButton_Click"/>
         <Button x:Name="listenButton1" Content="🔊 1" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Height="165" Width="165" FontSize="20" Click="listenButton_Click"/>
         <Button x:Name="listenButton2" Content="🔊 2" HorizontalAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Height="165" Width="165" FontSize="20" Click="listenButton_Click"/>
         <Button x:Name="listenButton3" Content="🔊 3" HorizontalAlignment="Left" Margin="350,320,0,0" VerticalAlignment="Top" Height="165" Width="165" FontSize="20" Click="listenButton_Click"/>

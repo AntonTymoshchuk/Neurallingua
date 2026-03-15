@@ -21,6 +21,7 @@ namespace Neurallingua
         private TestingEngine testingEngine;
         private PhrasePair phrasePair;
         private bool answerChecked = false;
+        private bool answerCorrect = false;
 
         public TaskType7Page(TestingEngine testingEngine)
         {
@@ -62,11 +63,14 @@ namespace Neurallingua
         {
             if (translationTextBox.Text == phrasePair.OriginPhrase)
             {
+                answerCorrect = true;
                 continueButton.Content = "Продолжить";
                 translationTextBox.Background = new SolidColorBrush(Colors.LightGreen);
                 phrasePair.IncreaseTimesTested();
                 testingEngine.EndUpWithTaskPage(Dispatcher, NavigationService);
             }
+            if (answerCorrect == true)
+                translationTextBox.Text = phrasePair.OriginPhrase;
         }
     }
 }
