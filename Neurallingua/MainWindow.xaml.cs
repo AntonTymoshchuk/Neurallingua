@@ -33,11 +33,25 @@ namespace Neurallingua
         }
     }
 
+    public enum TaskFamily
+    {
+        Testing = 0,
+        Writing = 1,
+        Speaking = 2
+    }
+
     public class PhrasePair
     {
         private string foreignPhrase;
         private string originPhrase;
         private int timesTested;
+        private int testing;
+        private int writing;
+        private int speaking;
+        private DateTime dateTime;
+        private int index;
+        private TaskFamily taskFamily;
+        private bool toRepeat = false;
 
         public string ForeignPhrase
         {
@@ -55,22 +69,103 @@ namespace Neurallingua
             set { timesTested = value; }
         }
 
-        public PhrasePair(string foreignPhrase, string originPhrase, int timesTested)
+        public int Index
+        {
+            get { return index; }
+        }
+
+        public TaskFamily TaskFamily
+        {
+            get { return taskFamily; }
+        }
+
+        public bool ToRepeat
+        {
+            get { return toRepeat; }
+            set { toRepeat = value; }
+        }
+
+        public PhrasePair(string foreignPhrase, string originPhrase, int timesTested,
+            int testing, int writing, int speaking, DateTime dateTime)
         {
             this.foreignPhrase = foreignPhrase;
             this.originPhrase = originPhrase;
             this.timesTested = timesTested;
+            this.testing = testing;
+            this.writing = writing;
+            this.speaking = speaking;
+            this.dateTime = dateTime;
+            index = timesTested - (DateTime.Now - dateTime).Days * 2;
+        }
+
+        public bool CheckIfIsNew()
+        {
+            if (timesTested == 0 && testing == 0 && writing == 0 && speaking == 0)
+                return true;
+            return false;
+        }
+
+        public TaskFamily SelectTaskFamily()
+        {
+            if (CheckIfIsNew() == true)
+                return TaskFamily.Testing;
+            int times = 0;
+            bool selected = false;
+            List<TaskFamily> families = new List<TaskFamily>();
+            while (selected == false)
+            {
+                if (testing == times)
+                {
+                    selected = true;
+                    families.Add(TaskFamily.Testing);
+                }
+                if (writing == times)
+                {
+                    selected = true;
+                    families.Add(TaskFamily.Writing);
+                }
+                if (speaking == times)
+                {
+                    selected = true;
+                    families.Add(TaskFamily.Speaking);
+                }
+                times++;
+            }
+            Random random = new Random();
+            int familyId = random.Next(0, families.Count);
+            taskFamily = families[familyId];
+            return taskFamily;
         }
 
         public void IncreaseTimesTested()
         {
             timesTested++;
+            dateTime = DateTime.Now;
+            EditTaskFamilyValue(1);
+            toRepeat = false;
+        }
+
+        public void EditTaskFamilyValue(int value)
+        {
+            switch (taskFamily)
+            {
+                case TaskFamily.Testing:
+                    testing += value;
+                    break;
+                case TaskFamily.Writing:
+                    writing += value;
+                    break;
+                case TaskFamily.Speaking:
+                    speaking += value;
+                    break;
+            }
         }
 
         public override string ToString()
         {
-            string s = string.Format("{0}|{1}|{2}",
-                foreignPhrase, originPhrase, timesTested);
+            string s = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}",
+                foreignPhrase, originPhrase, timesTested, testing,
+                writing, speaking, dateTime);
             return s;
         }
     }
@@ -81,25 +176,34 @@ namespace Neurallingua
         private int testsCount;
         private int totalTestsCount;
         private int lessTestedValue;
+        private int midMemoryIndex;
         private List<PhrasePair> allPhrasePairs;
         private List<PhrasePair> testingPhrasePairs;
         private List<PhrasePair> testedPhrasePairs;
         private List<PhrasePair> randPhrasePairs;
-        private PhrasePair lastPhrasePair;
+        private PhrasePair currentPhrasePair;
         private bool goToStudyingPage = false;
         SpeechSynthesizer synthesizer;
 
         public int Total
-        { get { return totalTestsCount; } }
+        {
+            get { return totalTestsCount; }
+        }
 
         public int Progress
-        { get { return totalTestsCount - testsCount; } }
+        {
+            get { return totalTestsCount - testsCount; }
+        }
 
-        public PhrasePair LastPhrasePair
-        { get { return lastPhrasePair; } }
+        public PhrasePair CurrentPhrasePair
+        {
+            get { return currentPhrasePair; }
+        }
 
         public bool GoToStudyingPage
-        { get { return goToStudyingPage; } }
+        {
+            get { return goToStudyingPage; }
+        }
 
         public TestingEngine()
         {
@@ -124,7 +228,9 @@ namespace Neurallingua
             string[] strings = File.ReadAllLines(phrasesPath);
             string[] items;
             string foreignPhrase, originPhrase;
-            int timesTested;
+            int timesTested, testing, writing, speaking;
+            DateTime dateTime;
+            double sum = 0; int count = 0;
             foreach (string s in strings)
             {
                 items = s.Split('|');
@@ -132,63 +238,100 @@ namespace Neurallingua
                 {
                     foreignPhrase = items[0];
                     originPhrase = items[1];
-                    timesTested = Convert.ToInt32(items[2]);
+                    timesTested = 0;
+                    testing = 0;
+                    writing = 0;
+                    speaking = 0;
+                    dateTime = DateTime.Now;
+                    if (items.Length == 7)
+                    {
+                        timesTested = Convert.ToInt32(items[2]);
+                        testing = Convert.ToInt32(items[3]);
+                        writing = Convert.ToInt32(items[4]);
+                        speaking = Convert.ToInt32(items[5]);
+                        dateTime = Convert.ToDateTime(items[6]);
+                    }
+                    if (timesTested >= 3)
+                    {
+                        sum += timesTested;
+                        count++;
+                    }
                     PhrasePair phrasePair = new PhrasePair(
-                        foreignPhrase, originPhrase, timesTested);
+                        foreignPhrase, originPhrase, timesTested,
+                        testing, writing, speaking, dateTime);
                     allPhrasePairs.Add(phrasePair);
                     randPhrasePairs.Add(phrasePair);
                 }
                 catch
                 {
-                    MessageBox.Show("Ошибка в DeterminePhrasePairs");
+                    MessageBox.Show(s);
                     return false;
                 }
             }
+            midMemoryIndex = Convert.ToInt32(Math.Round(
+                sum / count / 2, 0, MidpointRounding.AwayFromZero));
+            if (midMemoryIndex < 3)
+                midMemoryIndex = 3;
             if (this.testsCount > allPhrasePairs.Count)
                 this.testsCount = allPhrasePairs.Count;
             totalTestsCount = this.testsCount;
 
             lessTestedValue = allPhrasePairs[0].TimesTested;
-            PhrasePair lessTestedPair;
+            PhrasePair lessIndexPair;
             int iteration = 0;
             while (iteration < this.testsCount)
             {
                 if (allPhrasePairs.Count == 0)
                     break;
-                lessTestedPair = allPhrasePairs[0];
+                lessIndexPair = allPhrasePairs[0];
                 foreach (PhrasePair phrasePair in allPhrasePairs)
                 {
-                    if (phrasePair != lessTestedPair &&
-                        phrasePair.TimesTested < lessTestedPair.TimesTested)
-                        lessTestedPair = phrasePair;
+                    if (phrasePair != lessIndexPair &&
+                        phrasePair.Index < lessIndexPair.Index)
+                        lessIndexPair = phrasePair;
                     if (phrasePair.TimesTested < lessTestedValue)
                         lessTestedValue = phrasePair.TimesTested;
                 }
-                testingPhrasePairs.Add(lessTestedPair);
-                allPhrasePairs.Remove(lessTestedPair);
-                iteration++;
+                int distance = midMemoryIndex - lessIndexPair.TimesTested;
+                if (distance <= 0)
+                    distance = 1;
+                while (distance > 0 && iteration < this.testsCount)
+                {
+                    testingPhrasePairs.Add(lessIndexPair);
+                    allPhrasePairs.Remove(lessIndexPair);
+                    distance--;
+                    iteration++;
+                }
             }
-
             return true;
         }
 
-        public PhrasePair GetNextTestingPair()
+        private PhrasePair GetNextTestingPair()
         {
             Random random = new Random();
             int index = random.Next(0, testingPhrasePairs.Count);
             PhrasePair testingPair = testingPhrasePairs[index];
             testingPhrasePairs.Remove(testingPair);
-            testedPhrasePairs.Add(testingPair);
-            lastPhrasePair = testingPair;
+            if (testedPhrasePairs.Contains(testingPair) == false)
+                testedPhrasePairs.Add(testingPair);
             testsCount--;
             return testingPair;
+        }
+
+        private TaskFamily GetNextTaskFamily()
+        {
+            if (currentPhrasePair.ToRepeat)
+                return currentPhrasePair.TaskFamily;
+            return currentPhrasePair.SelectTaskFamily();
         }
 
         public void AddPhrasePairToRepeat(PhrasePair phrasePair)
         {
             if (testedPhrasePairs.Contains(phrasePair))
             {
+                phrasePair.ToRepeat = true;
                 phrasePair.TimesTested = lessTestedValue - 1;
+                phrasePair.EditTaskFamilyValue(-1);
                 testingPhrasePairs.Add(phrasePair);
                 testedPhrasePairs.Remove(phrasePair);
                 goToStudyingPage = true;
@@ -199,7 +342,7 @@ namespace Neurallingua
         private void SaveTestedPhrases()
         {
             allPhrasePairs.AddRange(testedPhrasePairs);
-            allPhrasePairs.AddRange(testingPhrasePairs);
+            // allPhrasePairs.AddRange(testingPhrasePairs);
             List<string> strings = new List<string>();
             foreach (PhrasePair pair in allPhrasePairs)
                 strings.Add(pair.ToString());
@@ -228,36 +371,41 @@ namespace Neurallingua
                 goToStudyingPage = false;
                 return;
             }
+            currentPhrasePair = GetNextTestingPair();
+            TaskFamily family = GetNextTaskFamily();
             Random random = new Random();
-            int taskType = random.Next(0, 7);
-            switch (taskType)
+            switch (family)
             {
-                case 0:
-                    navigationService.Navigate(new TaskType1Page(this));
+                case TaskFamily.Testing:
+                    switch (random.Next(0, 4))
+                    {
+                        case 0:
+                            navigationService.Navigate(new TaskType1Page(this));
+                            break;
+                        case 1:
+                            navigationService.Navigate(new TaskType3Page(this));
+                            break;
+                        case 2:
+                            navigationService.Navigate(new TaskType4Page(this));
+                            break;
+                        case 3:
+                            navigationService.Navigate(new TaskType5Page(this));
+                            break;
+                    }
                     break;
-                case 1:
-                    navigationService.Navigate(new TaskType2Page(this));
+                case TaskFamily.Writing:
+                    switch (random.Next(0, 2))
+                    {
+                        case 0:
+                            navigationService.Navigate(new TaskType2Page(this));
+                            break;
+                        case 1:
+                            navigationService.Navigate(new TaskType6Page(this));
+                            break;
+                    }
                     break;
-                case 2:
-                    navigationService.Navigate(new TaskType3Page(this));
-                    break;
-                case 3:
-                    navigationService.Navigate(new TaskType4Page(this));
-                    break;
-                case 4:
-                    navigationService.Navigate(new TaskType5Page(this));
-                    break;
-                case 5:
-                    navigationService.Navigate(new TaskType6Page(this));
-                    break;
-                case 6:
+                case TaskFamily.Speaking:
                     navigationService.Navigate(new TaskType9Page(this));
-                    break;
-                case 7:
-                    navigationService.Navigate(new TaskType7Page(this));
-                    break;
-                case 8:
-                    navigationService.Navigate(new TaskType8Page(this));
                     break;
             }
         }
@@ -266,7 +414,7 @@ namespace Neurallingua
         {
             Thread thread = new(() =>
             {
-                ReadPhrase(lastPhrasePair.ForeignPhrase, false);
+                ReadPhrase(currentPhrasePair.ForeignPhrase, false);
                 dispatcher.Invoke(() =>
                 {
                     GoToNextTaskPage(navigationService);

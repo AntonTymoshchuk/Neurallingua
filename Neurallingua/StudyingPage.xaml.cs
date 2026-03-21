@@ -26,7 +26,7 @@ namespace Neurallingua
         {
             InitializeComponent();
             this.testingEngine = testingEngine;
-            phrasePair = testingEngine.LastPhrasePair;
+            phrasePair = testingEngine.CurrentPhrasePair;
             foreignPhraseTextBlock.Text = phrasePair.ForeignPhrase;
             originPhraseTextBlock.Text = phrasePair.OriginPhrase;
             testingEngine.ReadPhrase(phrasePair.ForeignPhrase);

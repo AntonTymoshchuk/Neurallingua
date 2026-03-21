@@ -30,7 +30,7 @@ namespace Neurallingua
             InitializeComponent();
             foreignPhrases = new string[4];
             this.testingEngine = testingEngine;
-            phrasePair = testingEngine.GetNextTestingPair();
+            phrasePair = testingEngine.CurrentPhrasePair;
             phraseTextBlock.Text = phrasePair.OriginPhrase;
             sessionProgressBar.Maximum = testingEngine.Total;
             sessionProgressBar.Value = testingEngine.Progress;

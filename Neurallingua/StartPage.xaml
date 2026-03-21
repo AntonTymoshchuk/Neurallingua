@@ -8,11 +8,11 @@
       Title="StartPage" Width="525" Height="700">
 
     <Grid>
-        <Button x:Name="start30Button" Content="Повторить 30" HorizontalAlignment="Center" Margin="0,170,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
-        <Button x:Name="start50Button" Content="Повторить 50" HorizontalAlignment="Center" Margin="0,275,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
-        <Button x:Name="start100Button" Content="Повторить 100" HorizontalAlignment="Center" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click" Margin="0,380,0,0"/>
-        <Button x:Name="start150Button" Content="Повторить 150" HorizontalAlignment="Center" Margin="0,485,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
-        <Button x:Name="start300Button" Content="Повторить 300" HorizontalAlignment="Center" Margin="0,590,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
+        <Button x:Name="start30Button" Content="Тренировка 30" HorizontalAlignment="Center" Margin="0,170,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
+        <Button x:Name="start50Button" Content="Тренировка 50" HorizontalAlignment="Center" Margin="0,275,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
+        <Button x:Name="start100Button" Content="Тренировка 100" HorizontalAlignment="Center" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click" Margin="0,380,0,0"/>
+        <Button x:Name="start150Button" Content="Тренировка 150" HorizontalAlignment="Center" Margin="0,485,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
+        <Button x:Name="start300Button" Content="Тренировка 300" HorizontalAlignment="Center" Margin="0,590,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="startButton_Click"/>
         <Button x:Name="listeningButton" Content="Прослушать" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="505" Height="100" FontSize="20" Click="listeningButton_Click"/>
     </Grid>
 </Page>

@@ -27,7 +27,7 @@ namespace Neurallingua
         {
             InitializeComponent();
             this.testingEngine = testingEngine;
-            phrasePair = testingEngine.GetNextTestingPair();
+            phrasePair = testingEngine.CurrentPhrasePair;
             sessionProgressBar.Maximum = testingEngine.Total;
             sessionProgressBar.Value = testingEngine.Progress;
             testingEngine.ReadPhrase(phrasePair.ForeignPhrase);
