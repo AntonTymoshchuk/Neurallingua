@@ -96,6 +96,9 @@ namespace Neurallingua
             this.speaking = speaking;
             this.dateTime = dateTime;
             index = timesTested - (DateTime.Now - dateTime).Days * 2;
+            int ratio = GetMinFamilyValue() - GetMaxFamilyValue();
+            if (ratio < -1)
+                index = ratio;
         }
 
         public bool CheckIfIsNew()
@@ -109,7 +112,7 @@ namespace Neurallingua
         {
             if (CheckIfIsNew() == true)
                 return TaskFamily.Testing;
-            int times = 0;
+            int times = -5;
             bool selected = false;
             List<TaskFamily> families = new List<TaskFamily>();
             while (selected == false)
@@ -151,14 +154,46 @@ namespace Neurallingua
             {
                 case TaskFamily.Testing:
                     testing += value;
+                    if (testing < -5)
+                        testing = -5;
                     break;
                 case TaskFamily.Writing:
                     writing += value;
+                    if (writing < -5)
+                        writing = -5;
                     break;
                 case TaskFamily.Speaking:
                     speaking += value;
+                    if (speaking < -5)
+                        speaking = -5;
                     break;
             }
+        }
+
+        private int GetMinFamilyValue()
+        {
+            int[] values = [testing, writing, speaking];
+            int min = values[0], iteration = 1;
+            while (iteration < values.Length)
+            {
+                if (values[iteration] < min)
+                    min = values[iteration];
+                iteration++;
+            }
+            return min;
+        }
+
+        private int GetMaxFamilyValue()
+        {
+            int[] values = [testing, writing, speaking];
+            int max = values[0], iteration = 1;
+            while (iteration < values.Length)
+            {
+                if (values[iteration] > max)
+                    max = values[iteration];
+                iteration++;
+            }
+            return max;
         }
 
         public override string ToString()
