@@ -88,8 +88,9 @@ namespace Neurallingua
         public PhrasePair(string foreignPhrase, string originPhrase, int timesTested,
             int testing, int writing, int speaking, DateTime dateTime)
         {
-            this.foreignPhrase = foreignPhrase;
-            this.originPhrase = originPhrase;
+            this.foreignPhrase = foreignPhrase.Replace('’', '\'');
+            this.foreignPhrase = this.foreignPhrase.ToLower();
+            this.originPhrase = originPhrase.ToLower();
             this.timesTested = timesTested;
             this.testing = testing;
             this.writing = writing;
@@ -377,7 +378,6 @@ namespace Neurallingua
         private void SaveTestedPhrases()
         {
             allPhrasePairs.AddRange(testedPhrasePairs);
-            // allPhrasePairs.AddRange(testingPhrasePairs);
             List<string> strings = new List<string>();
             foreach (PhrasePair pair in allPhrasePairs)
                 strings.Add(pair.ToString());

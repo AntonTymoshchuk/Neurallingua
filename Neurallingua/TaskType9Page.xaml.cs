@@ -22,7 +22,8 @@ namespace Neurallingua
     {
         private TestingEngine testingEngine;
         private PhrasePair phrasePair;
-        private bool recognitionStarted = false;
+        private CultureInfo culture;
+        private SpeechRecognitionEngine recognitionEngine;
         private bool recognitionFinished = false;
 
         public TaskType9Page(TestingEngine testingEngine)
@@ -33,26 +34,25 @@ namespace Neurallingua
             phraseTextBlock.Text = phrasePair.OriginPhrase;
             sessionProgressBar.Maximum = testingEngine.Total;
             sessionProgressBar.Value = testingEngine.Progress;
+            culture = CultureInfo.GetCultureInfo("fr-FR");
         }
 
         private void speakButton_Click(object sender, RoutedEventArgs e)
         {
-            if (recognitionStarted == true)
-                return;
-            recognitionStarted = true;
+            if (recognitionEngine != null)
+                recognitionEngine.RecognizeAsyncCancel();
 
-            CultureInfo culture = CultureInfo.GetCultureInfo("fr-FR");
-            SpeechRecognitionEngine engine = new SpeechRecognitionEngine(culture);
-            engine.SetInputToDefaultAudioDevice();
+            recognitionEngine = new SpeechRecognitionEngine(culture);
+            recognitionEngine.SetInputToDefaultAudioDevice();
 
             GrammarBuilder builder = new GrammarBuilder(GetRecognizablePhrase());
             builder.Culture = culture;
             Grammar grammar = new Grammar(builder);
-            engine.LoadGrammar(grammar);
+            recognitionEngine.LoadGrammar(grammar);
 
-            engine.SpeechRecognized += engine_SpeechRecognized;
-            engine.SpeechRecognitionRejected += engine_SpeechRecognitionRejected;
-            engine.RecognizeAsync(RecognizeMode.Single);
+            recognitionEngine.SpeechRecognized += engine_SpeechRecognized;
+            recognitionEngine.SpeechRecognitionRejected += engine_SpeechRecognitionRejected;
+            recognitionEngine.RecognizeAsync(RecognizeMode.Single);
         }
 
         private void continueButton_Click(object sender, RoutedEventArgs e)
@@ -86,10 +86,15 @@ namespace Neurallingua
         private string GetRecognizablePhrase()
         {
             string phrase = phrasePair.ForeignPhrase;
-            string[] items = phrase.Split(new char[] { ';', ',', '(', ')' });
+            string[] items = phrase.Split(
+                [';', ',', ':', '«', '»', '(', ')', '?', '!']);
             string recognizablePhrase = string.Empty;
-            foreach (string item in items)
-                recognizablePhrase += item;
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i] = items[i].Trim();
+                recognizablePhrase += string.Format("{0} ", items[i]);
+            }
+            recognizablePhrase = recognizablePhrase.Trim();
             return recognizablePhrase;
         }
     }
